@@ -1,0 +1,26 @@
+{
+  "name": "job-search-shared",
+  "version": "1.0.0",
+  "description": "Shared core library for UK job search skills (Playwright browser management, types, formatting)",
+  "type": "module",
+  "main": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./types": "./src/types.ts",
+    "./browser": "./src/browser.ts",
+    "./formatting": "./src/formatting.ts"
+  },
+  "scripts": {
+    "test": "bun test --timeout 30000",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "playwright": "^1.52.0",
+    "zod": "^3.23.0",
+    "@bunli/utils": "latest"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.4.0"
+  }
+}
