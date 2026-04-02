@@ -4,27 +4,31 @@
 
 ## Search Sites
 
-Primary (Danish job market):
-- **jobindex.dk** - largest Danish job board
-- **linkedin.com/jobs** - LinkedIn job listings (filter: Denmark / your city)
-- **karriere.dk** - IDA's job board (engineering/science roles)
-- **jobfinder.dk** - another major Danish job board
-- **akademikernes.dk** - academic union job board
+Primary (CLI tools via jobspy-api):
+- **LinkedIn** - via `linkedin-search` CLI skill (`.agents/skills/linkedin-search/`)
+- **Indeed** - via `indeed-search` CLI skill (`.agents/skills/indeed-search/`)
+
+Both use a self-hosted jobspy-api Docker backend with Playwright as fallback. Run `setup` in either CLI to start the Docker container.
 
 Secondary (company career pages via Google):
 - Direct Google searches with `site:` filters for known target companies
 
 ## Query Categories
 
-Queries are grouped by priority. Each query should be combined with your location terms (e.g. "Copenhagen", "Sjælland", "Hovedstaden") where the site supports it.
+Queries are grouped by priority. Each query should be combined with your location terms where the site supports it. Use the LinkedIn and Indeed CLI skills for structured searches, and Google `site:` queries for supplementary coverage.
 
 ### Priority 1: [YOUR_PRIMARY_ROLE_TYPE]
 
 These match your strongest and most desired career direction.
 
-```
-site:jobindex.dk "[YOUR_PRIMARY_JOB_TITLE]" [YOUR_CITY]
-site:jobindex.dk "[YOUR_KEY_SKILL]" [YOUR_CITY]
+```bash
+# LinkedIn CLI
+bun run skills/linkedin-search/cli/src/cli.ts search --keywords "[YOUR_PRIMARY_JOB_TITLE]" --location "[YOUR_CITY]" --format json
+
+# Indeed CLI
+bun run skills/indeed-search/cli/src/cli.ts search --keywords "[YOUR_PRIMARY_JOB_TITLE]" --location "[YOUR_CITY]" --format json
+
+# Google fallback
 site:linkedin.com/jobs "[YOUR_PRIMARY_JOB_TITLE]" [YOUR_COUNTRY]
 ```
 
@@ -32,29 +36,36 @@ site:linkedin.com/jobs "[YOUR_PRIMARY_JOB_TITLE]" [YOUR_COUNTRY]
 
 These match your domain expertise.
 
-```
-site:jobindex.dk [YOUR_DOMAIN_KEYWORD_1] [YOUR_CITY] OR [YOUR_REGION]
-site:jobindex.dk [YOUR_DOMAIN_KEYWORD_2] [YOUR_COUNTRY]
-site:linkedin.com/jobs [YOUR_DOMAIN_KEYWORD_1] [YOUR_CITY] [YOUR_COUNTRY]
+```bash
+# LinkedIn CLI
+bun run skills/linkedin-search/cli/src/cli.ts search --keywords "[YOUR_DOMAIN_KEYWORD_1]" --location "[YOUR_CITY]" --format json
+
+# Indeed CLI
+bun run skills/indeed-search/cli/src/cli.ts search --keywords "[YOUR_DOMAIN_KEYWORD_1]" --location "[YOUR_REGION]" --format json
 ```
 
 ### Priority 3: [YOUR_ADJACENT_ROLE_TYPE]
 
 Adjacent roles you could pivot into.
 
-```
-site:jobindex.dk "[YOUR_ADJACENT_TITLE_1]" [YOUR_KEY_SKILL] [YOUR_CITY]
-site:jobindex.dk "[YOUR_ADJACENT_TITLE_2]" [YOUR_KEY_SKILL] [YOUR_CITY]
+```bash
+# LinkedIn CLI
+bun run skills/linkedin-search/cli/src/cli.ts search --keywords "[YOUR_ADJACENT_TITLE_1] [YOUR_KEY_SKILL]" --location "[YOUR_CITY]" --format json
+
+# Indeed CLI
+bun run skills/indeed-search/cli/src/cli.ts search --keywords "[YOUR_ADJACENT_TITLE_2] [YOUR_KEY_SKILL]" --location "[YOUR_CITY]" --format json
 ```
 
 ### Priority 4: Broader Technical / Consulting
 
 Wider net for general technical roles.
 
-```
-site:jobindex.dk [YOUR_KEY_SKILL] developer [YOUR_CITY]
-site:linkedin.com/jobs "[YOUR_KEY_SKILL] developer" [YOUR_CITY]
-site:jobindex.dk "technical consultant" [YOUR_DOMAIN] [YOUR_CITY]
+```bash
+# LinkedIn CLI
+bun run skills/linkedin-search/cli/src/cli.ts search --keywords "[YOUR_KEY_SKILL] developer" --location "[YOUR_CITY]" --format json
+
+# Indeed CLI
+bun run skills/indeed-search/cli/src/cli.ts search --keywords "technical consultant [YOUR_DOMAIN]" --location "[YOUR_CITY]" --format json
 ```
 
 ## Location Filter
