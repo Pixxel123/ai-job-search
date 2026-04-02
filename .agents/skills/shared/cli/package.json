@@ -10,13 +10,15 @@
     "./browser": "./src/browser.ts",
     "./formatting": "./src/formatting.ts",
     "./docker": "./src/docker.ts",
-    "./jobspy-client": "./src/jobspy-client.ts"
+    "./jobspy-client": "./src/jobspy-client.ts",
+    "./setup-command": "./src/setup-command.ts"
   },
   "scripts": {
     "test": "bun test --timeout 30000",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@bunli/core": "latest",
     "playwright": "^1.52.0",
     "zod": "^3.23.0",
     "@bunli/utils": "latest"

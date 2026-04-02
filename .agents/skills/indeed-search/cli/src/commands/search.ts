@@ -34,7 +34,6 @@ export const search = defineCommand({
     remote: option(z.boolean().default(false), { description: "Remote jobs only", short: "r" }),
     salary: option(z.string().optional(), { description: "Minimum salary filter" }),
     since: option(z.string().optional(), { description: "Date posted: last-24h, last-3d, last-7d, last-14d" }),
-    experience: option(z.string().optional(), { description: "Experience level filter" }),
     limit: option(z.coerce.number().default(25), { description: "Max results to return" }),
     format: option(z.enum(["json", "table", "plain"]).default("json"), { description: "Output format" }),
   },

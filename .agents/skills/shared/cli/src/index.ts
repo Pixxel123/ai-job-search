@@ -46,3 +46,5 @@ export {
   type JobSpyResult,
   type JobSpySearchInput,
 } from "./jobspy-client.js"
+
+export { setup as setupCommand } from "./setup-command.js"

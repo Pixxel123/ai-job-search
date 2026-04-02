@@ -17,29 +17,39 @@ allowed-tools: Bash(bun run skills/linkedin-search/cli/src/cli.ts *)
 
 # LinkedIn Search Skill
 
-Search UK job listings on LinkedIn with authenticated browser sessions. Uses Playwright to automate Chromium for full page rendering and JavaScript execution.
+Search job listings on LinkedIn using jobspy-api (Docker) as the primary backend, with Playwright browser automation as fallback.
 
 ## When to use this skill
 
 Invoke this skill when the user wants to:
 
-- Search for jobs on LinkedIn, particularly in the UK
+- Search for jobs on LinkedIn
 - Log in to LinkedIn to enable authenticated job searches
 - Get full details for a specific LinkedIn job posting
 - Find remote, hybrid, or on-site positions on LinkedIn
-- Filter LinkedIn jobs by type, experience level, or salary
+- Filter LinkedIn jobs by type, experience level, or date posted
 
 ## Prerequisites
 
-Before searching, the user must log in once:
+1. **Docker (recommended):** Install Docker for the jobspy-api backend. Run `setup` to start the container. If Docker is unavailable, the skill falls back to Playwright browser automation automatically.
+
+2. **LinkedIn login:** Before searching, log in once:
 
 ```bash
 bun run skills/linkedin-search/cli/src/cli.ts login
 ```
 
-This opens a visible browser window. The user logs in manually (handles 2FA/CAPTCHA). Session cookies are saved and reused for subsequent commands.
+This opens a visible browser window. The user logs in manually (handles 2FA/CAPTCHA). Session cookies are saved and reused — both by jobspy-api (via `li_at` cookie) and by the Playwright fallback.
 
 ## Commands
+
+### Setup (optional)
+
+```bash
+bun run skills/linkedin-search/cli/src/cli.ts setup
+```
+
+Pulls and starts the jobspy-api Docker container. Shared with the Indeed skill — only needs to run once. Search commands also auto-start the container if needed.
 
 ### Log in to LinkedIn
 
@@ -62,7 +72,6 @@ Key flags:
 - `--type <value>` — full-time, part-time, contract, permanent, internship, volunteer
 - `--remote <value>` — on-site, remote, hybrid
 - `--experience <value>` — internship, entry, associate, mid-senior, director, executive
-- `--salary <value>` — salary range filter
 - `--since <value>` — past-24h, past-week, past-month
 - `--limit <n>` — max results (default: 25)
 - `--format json|table|plain`
@@ -121,7 +130,8 @@ All errors are written to **stderr** as `{ "error": "...", "code": "..." }` and 
 
 ## Notes
 
+- **jobspy-api** is the primary search backend (Docker). Falls back to Playwright if unavailable.
 - Requires a LinkedIn login session. Run `login` first.
 - If cookies expire, commands will print an error asking you to run `login` again.
-- LinkedIn may change their page structure — if scraping breaks, `scraper.ts` is the file to update.
-- Stealth measures (realistic user-agent, disabled webdriver flag) are applied automatically.
+- The `detail` command always uses Playwright to navigate directly to the job page.
+- LinkedIn may change their page structure — if Playwright scraping breaks, `scraper.ts` is the file to update.

@@ -32,7 +32,6 @@ export const search = defineCommand({
     type: option(z.string().optional(), { description: "Job type: full-time, part-time, contract, permanent, internship, volunteer" }),
     remote: option(z.string().optional(), { description: "Remote filter: on-site, remote, hybrid" }),
     experience: option(z.string().optional(), { description: "Experience: internship, entry, associate, mid-senior, director, executive" }),
-    salary: option(z.string().optional(), { description: "Salary range filter" }),
     since: option(z.string().optional(), { description: "Date posted: past-24h, past-week, past-month" }),
     limit: option(z.coerce.number().default(25), { description: "Max results to return" }),
     format: option(z.enum(["json", "table", "plain"]).default("json"), { description: "Output format" }),
@@ -89,7 +88,6 @@ async function playwrightSearch(flags: Record<string, any>): Promise<void> {
       jobType: flags.type ?? null,
       remote: flags.remote ?? null,
       experienceLevel: flags.experience ?? null,
-      salary: flags.salary ?? null,
       since: flags.since ?? null,
     })
 
