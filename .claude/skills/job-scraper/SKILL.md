@@ -2,7 +2,7 @@
 
 **name:** job-scraper
 **description:** Searches LinkedIn and Indeed for new positions matching your profile using jobspy-api CLI tools. Deduplicates across runs. Triggers on: job scrape, find jobs, search jobs, new jobs, job search, scrape jobs, /scrape
-**allowed-tools:** Read, Write, Edit, Glob, Grep, WebFetch, WebSearch, Agent, AskUserQuestion
+**allowed-tools:** Read, Write, Edit, Glob, Grep, Bash, WebFetch, WebSearch, Agent, AskUserQuestion
 
 ---
 
@@ -32,25 +32,47 @@ Optional arguments:
 2. Read `job_search_tracker.csv` to extract already-applied companies+roles
 3. Read `search-queries.md` (this directory) for the search strategy
 
-### Step 1: Search
+### Step 1: Search via CLI tools
 
-Run **WebSearch** queries from `search-queries.md`. By default, run the top 3 priority categories. If the user said "broad", run all categories.
+Use the LinkedIn and Indeed CLI tools as the **primary** search method. Build commands from `search-queries.md`, adapting the keywords, location, and filters for each priority category. By default, run the top 3 priority categories. If the user said "broad", run all categories.
 
-If the user specified a focus area (e.g. "data science"), prioritize queries from that category.
+If the user specified a focus area (e.g. "data science"), use it as the `--keywords` value.
 
-For each search:
-- Use the `linkedin-search` and `indeed-search` CLI tools (via `Bash`) for structured searches
-- Use `WebSearch` with Google `site:` queries for supplementary coverage
-- Target your configured geographic area
-- Look for postings from the last 14 days
+**LinkedIn searches:**
+```bash
+export PATH="$HOME/.bun/bin:$PATH"
+bun run .agents/skills/linkedin-search/cli/src/cli.ts search \
+  --keywords "<search terms>" \
+  --location "<location>" \
+  --since past-week \
+  --limit 25 \
+  --format json
+```
 
-### Step 2: Fetch & Parse
+**Indeed searches:**
+```bash
+bun run .agents/skills/indeed-search/cli/src/cli.ts search \
+  --keywords "<search terms>" \
+  --location "<location>" \
+  --since last-7d \
+  --limit 25 \
+  --format json
+```
 
-For each promising result from Step 1:
-- Use `WebFetch` to retrieve the job posting page
-- Extract: **job title**, **company**, **location**, **posting date** (or "recent"), **URL**, **key requirements** (brief), **application deadline** (if listed)
+Both output JSON with `{ "meta": { "total": N }, "results": [...] }`. Parse the JSON from stdout.
+
+Use `WebSearch` with Google `site:` queries only as supplementary coverage for sites not covered by the CLI tools.
+
+**Parallel execution:** Use the Agent tool to run LinkedIn and Indeed searches in parallel for speed.
+
+### Step 2: Parse & Deduplicate
+
+For each result from Step 1:
+- The CLI tools return structured JSON — no need to fetch/parse HTML
+- Each result has: `id`, `title`, `company`, `location`, `jobType`, `salary`, `url`, `posted`
 - Skip if the URL or company+title combo already exists in `seen_jobs.json`
 - Skip if the company+role already appears in `job_search_tracker.csv`
+- For supplementary WebSearch results, use `WebFetch` to extract details from the job page
 
 ### Step 3: Quick Fit Assessment
 
@@ -112,9 +134,10 @@ If the user decides to apply to any job, add a row to `job_search_tracker.csv`.
 
 ## Important Rules
 
-1. **Never fabricate job postings.** Only present jobs found via actual WebSearch/WebFetch results.
+1. **Never fabricate job postings.** Only present jobs found via actual CLI tool or WebSearch/WebFetch results.
 2. **Respect deduplication.** Always check seen_jobs.json AND job_search_tracker.csv before presenting.
 3. **Focus on configured geographic area.** Skip jobs that require relocation or are clearly outside commute range.
 4. **Only open positions.** Skip postings with expired deadlines or those marked as closed.
-5. **Be efficient with WebFetch.** Don't fetch every search result - use titles and snippets to pre-filter before fetching.
-6. **Parallel searches.** Use the Agent tool or parallel WebSearch calls to speed up the search phase.
+5. **CLI tools first.** Always use the LinkedIn and Indeed CLI tools as the primary search method. Fall back to WebSearch only for supplementary coverage.
+6. **Parallel searches.** Use the Agent tool to run LinkedIn and Indeed CLI searches in parallel for speed.
+7. **Bun path.** Always `export PATH="$HOME/.bun/bin:$PATH"` before running CLI tools.
