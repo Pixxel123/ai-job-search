@@ -1,0 +1,25 @@
+{
+  "name": "linkedin-search-cli",
+  "version": "1.0.0",
+  "description": "CLI for LinkedIn UK job search using Playwright",
+  "type": "module",
+  "main": "src/cli.ts",
+  "bin": {
+    "linkedin-search": "src/cli.ts"
+  },
+  "scripts": {
+    "start": "bun run src/cli.ts",
+    "test": "bun test --timeout 30000",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@bunli/core": "latest",
+    "@bunli/utils": "latest",
+    "job-search-shared": "file:../../shared/cli",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.4.0"
+  }
+}
