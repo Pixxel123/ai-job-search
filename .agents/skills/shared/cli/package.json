@@ -8,7 +8,9 @@
     ".": "./src/index.ts",
     "./types": "./src/types.ts",
     "./browser": "./src/browser.ts",
-    "./formatting": "./src/formatting.ts"
+    "./formatting": "./src/formatting.ts",
+    "./docker": "./src/docker.ts",
+    "./jobspy-client": "./src/jobspy-client.ts"
   },
   "scripts": {
     "test": "bun test --timeout 30000",

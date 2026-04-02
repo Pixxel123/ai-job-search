@@ -25,3 +25,24 @@ export {
   randomDelay,
   getConfigDir,
 } from "./browser.js"
+
+export {
+  isDockerAvailable,
+  isContainerRunning,
+  startService,
+  stopService,
+  ensureServiceRunning,
+  getServiceUrl,
+  getComposePath,
+} from "./docker.js"
+
+export {
+  searchJobs,
+  isServiceAvailable,
+  getLinkedInCookie,
+  mapJobSpyResult,
+  mapJobSpyToDetail,
+  buildSearchParams,
+  type JobSpyResult,
+  type JobSpySearchInput,
+} from "./jobspy-client.js"
