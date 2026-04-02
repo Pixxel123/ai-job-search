@@ -1,0 +1,7 @@
+services:
+  jobspy-api:
+    image: rainmanjam/jobspy-api:latest
+    container_name: jobspy-api
+    ports:
+      - "8004:8004"
+    restart: unless-stopped
